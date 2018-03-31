@@ -339,11 +339,11 @@ mountroot()
 		#       uses read-only loops if the fs is initially mounted read-only.
 		#       An alternative implementation would be to add losetup support
 		#       to busybox and do the mount in two steps (rw loop, ro fs).
-		if [ -n "$syspart" ]; then
-			mount -o rw $syspart ${rootmnt}
-		else
+		#if [ -n "$syspart" ]; then
+		#	mount -o rw $syspart ${rootmnt}
+		#else
 			mount -o loop,rw /tmpmnt/rootfs.img ${rootmnt}
-		fi
+		#fi
 		if [ -e /tmpmnt/.writable_image ]; then
 			echo "initrd: mounting rootfs.img (image developer mode)" >/dev/kmsg || true
 			mountroot_status="$?"

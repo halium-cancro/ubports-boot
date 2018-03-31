@@ -44,20 +44,6 @@ TARGET_VENDOR := "$(shell echo $(PRODUCT_BRAND) | tr '[:upper:]' '[:lower:]')"
 UBPORTS_FSTABS := $(shell find device/$(TARGET_VENDOR) -name *fstab* | grep -v goldfish)
 endif
 
-# Get the unique /dev field(s) from the line(s) containing the fs mount point
-# Note the perl one-liner uses double-$ as per Makefile syntax
-UBPORTS_BOOT_PART := $(shell /usr/bin/perl -w -e '$$fs=shift; if ($$ARGV[0]) { while (<>) { next unless /^$$fs\s|\s$$fs\s/;for (split) {next unless m(^/dev); print "$$_\n"; }}} else { print "ERROR: *fstab* not found\n";}' /boot $(UBPORTS_FSTABS) | sort -u)
-UBPORTS_DATA_PART := $(shell /usr/bin/perl -w -e '$$fs=shift; if ($$ARGV[0]) { while (<>) { next unless /^$$fs\s|\s$$fs\s/;for (split) {next unless m(^/dev); print "$$_\n"; }}} else { print "ERROR: *fstab* not found\n";}' /data $(UBPORTS_FSTABS) | sort -u)
-
-$(warning ********************* /boot appears to live on $(UBPORTS_BOOT_PART))
-$(warning ********************* /data appears to live on $(UBPORTS_DATA_PART))
-
-ifneq ($(words $(UBPORTS_BOOT_PART))$(words $(UBPORTS_DATA_PART)),11)
-$(error There should be a one and only one device entry for UBPORTS_BOOT_PART and UBPORTS_DATA_PART)
-endif
-
-UBPORTS_BOOTIMG_COMMANDLINE += datapart=$(UBPORTS_DATA_PART)
-
 
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
   INSTALLED_KERNEL_TARGET := $(PRODUCT_OUT)/kernel
